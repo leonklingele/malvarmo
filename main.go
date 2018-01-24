@@ -86,7 +86,7 @@ func private2Public(priv PrivateKey) PublicKey {
 	return pub[:]
 }
 
-// reduces ensures we stay in the Ed25519 finite field
+// reduce ensures we stay in the Ed25519 finite field
 func reduce(scalar []byte) []byte {
 	var in [64]byte
 	copy(in[:32], scalar[:])
