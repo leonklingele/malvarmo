@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/hex"
 	"testing"
 )
@@ -29,6 +30,28 @@ func TestPrivateSpend2ViewPair(t *testing.T) {
 	}
 	if got := vk.PublicKey(); b2h(got) != pubViewHex {
 		t.Fatalf("got incorrect public view key: %s", got)
+	}
+}
+
+func TestNewAddress(t *testing.T) {
+	spendKeyPair, viewKeyPair, _, err := newAddress()
+	if err != nil {
+		t.Fatalf("failed to create new address: %s", err.Error())
+	}
+
+	if got := private2Public(spendKeyPair.PrivateKey()); !bytes.Equal(got, spendKeyPair.PublicKey()) {
+		t.Fatalf("got incorrect public spend key from secret spend key: %s", b2h(got))
+	}
+	if got := private2Public(viewKeyPair.PrivateKey()); !bytes.Equal(got, viewKeyPair.PublicKey()) {
+		t.Fatalf("got incorrect public view key from secret view key: %s", b2h(got))
+	}
+
+	vk := makeViewKeyPair(spendKeyPair.PrivateKey())
+	if got := vk.PrivateKey(); !bytes.Equal(got, viewKeyPair.PrivateKey()) {
+		t.Fatalf("got incorrect private view key: %s", b2h(got))
+	}
+	if got := vk.PublicKey(); !bytes.Equal(got, viewKeyPair.PublicKey()) {
+		t.Fatalf("got incorrect public view key: %s", b2h(got))
 	}
 }
 

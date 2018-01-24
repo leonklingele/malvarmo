@@ -149,13 +149,21 @@ func base58encode(data []byte) []byte {
 	return res
 }
 
-func run() error {
+func newAddress() (*KeyPair, *KeyPair, []byte, error) {
 	spendKeyPair, err := newSpendKeyPair()
 	if err != nil {
-		return fmt.Errorf("failed to create new spend key pair: %s", err.Error())
+		return nil, nil, nil, fmt.Errorf("failed to create new spend key pair: %s", err.Error())
 	}
 	viewKeyPair := makeViewKeyPair(spendKeyPair.PrivateKey())
 	address := makeAddress(spendKeyPair.PublicKey(), viewKeyPair.PublicKey())
+	return spendKeyPair, viewKeyPair, address, nil
+}
+
+func run() error {
+	spendKeyPair, viewKeyPair, address, err := newAddress()
+	if err != nil {
+		return fmt.Errorf("failed to create new address: %s", err.Error())
+	}
 
 	fmt.Println("Private Spend Key:", hex.EncodeToString(spendKeyPair.PrivateKey()))
 	fmt.Println("Public Spend Key:", hex.EncodeToString(spendKeyPair.PublicKey()))
