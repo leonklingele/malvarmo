@@ -9,7 +9,8 @@ import (
 
 type fixture struct {
 	privSpendHex, pubSpendHex,
-	privViewHex, pubViewHex string
+	privViewHex, pubViewHex,
+	address string
 }
 
 var (
@@ -19,12 +20,14 @@ var (
 			"7849297236cd7c0d6c69a3c8c179c038d3c1c434735741bb3c8995c3c9d6f2ac",
 			"e514321d6163c9c222f22eb9f43dd1421aee455bb87adb9e0aee138aa8b4b806",
 			"c3fb70733f47f076a70766bfc3ff074e7b7c2663e65394790cc214549458d28e",
+			"46BVM4CnrP53FE2gcT3LJjAWJ6fGWq8t8YKRqwwit8vmVu3TJhqmYeKLr5VaNKENaJE8Nt1kdzpeFMFLS6aaePC5H35CgTN",
 		},
 		{
 			"75a84a0ec08f795474eb4952b40aec6648ffbad90a5cc4bec3a9964fc6ee1c01",
 			"f7b84112e3d36b774bcf01e63218439335171562c0d1b8917897b656cfe9ffad",
 			"699443b7ba8a0744b54b5a99b0197f0471c2d19027307fac3315d3b67ede640b",
 			"b6fa07731fe6a0045dfd323aea7ee85abc4f9729028d28e43e92c3878894b424",
+			"4B1ahC2k4bcLxKfnBpViWWRd6a1VjeFdqRLFbEHhoFciW4FYNUAT45D1jNGq4YKejHGBFSE2ktZRqfBFu3tHaLGT5Aug3jk",
 		},
 	}
 )
@@ -48,6 +51,15 @@ func TestPrivateSpend2ViewPair(t *testing.T) {
 		}
 		if got := vk.PublicKey(); b2h(got) != fx.pubViewHex {
 			return fmt.Errorf("got incorrect public view key: %s", got)
+		}
+		return nil
+	}, t)
+}
+
+func TestMakeAddress(t *testing.T) {
+	foreachFixture(func(fx fixture) error {
+		if got := makeAddress(h2b(fx.pubSpendHex), h2b(fx.pubViewHex)); string(got) != fx.address {
+			fmt.Errorf("got incorrect address: %s", got)
 		}
 		return nil
 	}, t)
