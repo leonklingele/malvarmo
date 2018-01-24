@@ -1,0 +1,24 @@
+{
+	"ImportPath": "github.com/leonklingele/malvarmo",
+	"GoVersion": "go1.9",
+	"GodepVersion": "v79",
+	"Deps": [
+		{
+			"ImportPath": "github.com/agl/ed25519/edwards25519",
+			"Rev": "5312a61534124124185d41f09206b9fef1d88403"
+		},
+		{
+			"ImportPath": "github.com/ethereum/go-ethereum/crypto/sha3",
+			"Comment": "v1.7.3-177-g05ade1930",
+			"Rev": "05ade19302357eba6a24348f31df140ce0eca326"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/ed25519",
+			"Rev": "3d37316aaa6bd9929127ac9a527abf408178ea7b"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/ed25519/internal/edwards25519",
+			"Rev": "3d37316aaa6bd9929127ac9a527abf408178ea7b"
+		}
+	]
+}
