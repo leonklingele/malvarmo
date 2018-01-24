@@ -44,11 +44,11 @@ func newSpendKeyPair() (*KeyPair, error) {
 	return &KeyPair{priv, pub}, nil
 }
 
-// makeViewKeyPair returns a view key pair based on a spend key pair
-func makeViewKeyPair(p *KeyPair) *KeyPair {
+// makeViewKeyPair returns a view key pair based on a private spend key
+func makeViewKeyPair(p PrivateKey) *KeyPair {
 	// Hash private spend key using Keccak256
 	h := sha3.NewKeccak256()
-	h.Write(p.PrivateKey())
+	h.Write(p)
 	// Important: Reduce to stay in finite field
 	priv := reduce(h.Sum(nil))
 	// Turn private into public key
@@ -154,7 +154,7 @@ func run() error {
 	if err != nil {
 		return fmt.Errorf("failed to create new spend key pair: %s", err.Error())
 	}
-	viewKeyPair := makeViewKeyPair(spendKeyPair)
+	viewKeyPair := makeViewKeyPair(spendKeyPair.PrivateKey())
 	address := makeAddress(spendKeyPair.PublicKey(), viewKeyPair.PublicKey())
 
 	fmt.Println("Private Spend Key:", hex.EncodeToString(spendKeyPair.PrivateKey()))
