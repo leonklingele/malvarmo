@@ -3,34 +3,54 @@ package main
 import (
 	"bytes"
 	"encoding/hex"
+	"fmt"
 	"testing"
 )
 
-// Fixture
-const (
-	privSpendHex = "75a84a0ec08f795474eb4952b40aec6648ffbad90a5cc4bec3a9964fc6ee1c01"
-	pubSpendHex  = "f7b84112e3d36b774bcf01e63218439335171562c0d1b8917897b656cfe9ffad"
+type fixture struct {
+	privSpendHex, pubSpendHex,
+	privViewHex, pubViewHex string
+}
 
-	privViewHex = "699443b7ba8a0744b54b5a99b0197f0471c2d19027307fac3315d3b67ede640b"
-	pubViewHex  = "b6fa07731fe6a0045dfd323aea7ee85abc4f9729028d28e43e92c3878894b424"
+var (
+	fixtures = []fixture{
+		{
+			"4a078e76cd41a3d3b534b83dc6f2ea2de500b653ca82273b7bfad8045d85a400",
+			"7849297236cd7c0d6c69a3c8c179c038d3c1c434735741bb3c8995c3c9d6f2ac",
+			"e514321d6163c9c222f22eb9f43dd1421aee455bb87adb9e0aee138aa8b4b806",
+			"c3fb70733f47f076a70766bfc3ff074e7b7c2663e65394790cc214549458d28e",
+		},
+		{
+			"75a84a0ec08f795474eb4952b40aec6648ffbad90a5cc4bec3a9964fc6ee1c01",
+			"f7b84112e3d36b774bcf01e63218439335171562c0d1b8917897b656cfe9ffad",
+			"699443b7ba8a0744b54b5a99b0197f0471c2d19027307fac3315d3b67ede640b",
+			"b6fa07731fe6a0045dfd323aea7ee85abc4f9729028d28e43e92c3878894b424",
+		},
+	}
 )
 
 func TestPrivateSpend2PublicSpend(t *testing.T) {
-	priv := h2b(privSpendHex)
-	if got := private2Public(priv); b2h(got) != pubSpendHex {
-		t.Fatalf("got incorrect public spend key: %s", got)
-	}
+	foreachFixture(func(fx fixture) error {
+		priv := h2b(fx.privSpendHex)
+		if got := private2Public(priv); b2h(got) != fx.pubSpendHex {
+			return fmt.Errorf("got incorrect public spend key: %s", got)
+		}
+		return nil
+	}, t)
 }
 
 func TestPrivateSpend2ViewPair(t *testing.T) {
-	privSpend := h2b(privSpendHex)
-	vk := makeViewKeyPair(PrivateKey(privSpend))
-	if got := vk.PrivateKey(); b2h(got) != privViewHex {
-		t.Fatalf("got incorrect private view key: %s", got)
-	}
-	if got := vk.PublicKey(); b2h(got) != pubViewHex {
-		t.Fatalf("got incorrect public view key: %s", got)
-	}
+	foreachFixture(func(fx fixture) error {
+		privSpend := h2b(fx.privSpendHex)
+		vk := makeViewKeyPair(PrivateKey(privSpend))
+		if got := vk.PrivateKey(); b2h(got) != fx.privViewHex {
+			return fmt.Errorf("got incorrect private view key: %s", got)
+		}
+		if got := vk.PublicKey(); b2h(got) != fx.pubViewHex {
+			return fmt.Errorf("got incorrect public view key: %s", got)
+		}
+		return nil
+	}, t)
 }
 
 func TestNewAddress(t *testing.T) {
@@ -52,6 +72,14 @@ func TestNewAddress(t *testing.T) {
 	}
 	if got := vk.PublicKey(); !bytes.Equal(got, viewKeyPair.PublicKey()) {
 		t.Fatalf("got incorrect public view key: %s", b2h(got))
+	}
+}
+
+func foreachFixture(f func(fixture) error, t *testing.T) {
+	for i, fx := range fixtures {
+		if err := f(fx); err != nil {
+			t.Fatalf("failed at fixture %d: %s", i, err.Error())
+		}
 	}
 }
 
