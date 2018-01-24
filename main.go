@@ -38,7 +38,7 @@ func newSpendKeyPair() (*KeyPair, error) {
 		return nil, fmt.Errorf("failed to generate Ed25519 key pair: %s", err.Error())
 	}
 	// Cut out private key part
-	priv := PrivateKey(k[:32])
+	priv := PrivateKey(reduce(k[:32]))
 	// .. and generate an associated public key
 	pub := private2Public(priv)
 	return &KeyPair{priv, pub}, nil
