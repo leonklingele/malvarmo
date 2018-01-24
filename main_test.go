@@ -59,7 +59,7 @@ func TestPrivateSpend2ViewPair(t *testing.T) {
 func TestMakeAddress(t *testing.T) {
 	foreachFixture(func(fx fixture) error {
 		if got := makeAddress(h2b(fx.pubSpendHex), h2b(fx.pubViewHex)); string(got) != fx.address {
-			fmt.Errorf("got incorrect address: %s", got)
+			return fmt.Errorf("got incorrect address: %s", got)
 		}
 		return nil
 	}, t)
