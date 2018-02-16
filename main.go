@@ -166,10 +166,10 @@ func run() error {
 	}
 
 	fmt.Println("Private Spend Key:", hex.EncodeToString(spendKeyPair.PrivateKey()))
-	fmt.Println("Public Spend Key:", hex.EncodeToString(spendKeyPair.PublicKey()))
-	fmt.Println("Private View Key:", hex.EncodeToString(viewKeyPair.PrivateKey()))
-	fmt.Println("Public View Key:", hex.EncodeToString(viewKeyPair.PublicKey()))
-	fmt.Println("Address:", string(address))
+	fmt.Println("Public Spend Key: ", hex.EncodeToString(spendKeyPair.PublicKey()))
+	fmt.Println("Private View Key: ", hex.EncodeToString(viewKeyPair.PrivateKey()))
+	fmt.Println("Public View Key:  ", hex.EncodeToString(viewKeyPair.PublicKey()))
+	fmt.Println("Address:          ", string(address))
 
 	return nil
 }
