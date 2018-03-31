@@ -46,7 +46,7 @@ func newSpendKeyPair() (*KeyPair, error) {
 
 // makeViewKeyPair returns a view key pair based on a private spend key
 func makeViewKeyPair(p PrivateKey) *KeyPair {
-	// Hash private spend key using Keccak256
+	// Hash private spend key using Keccak-256
 	h := sha3.NewKeccak256()
 	h.Write(p)
 	// Important: Reduce to stay in finite field
