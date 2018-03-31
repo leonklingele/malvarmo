@@ -96,7 +96,7 @@ func reduce(scalar []byte) []byte {
 }
 
 // Based on https://github.com/moneromooo-monero/monero-wallet-generator/blob/master/monero-wallet-generator.html
-// base58encode generates a Monero address
+// base58encode converts data into Base58-format
 func base58encode(data []byte) []byte {
 	const (
 		fullBlockSize        = 8
