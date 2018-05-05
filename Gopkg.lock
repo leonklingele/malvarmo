@@ -8,23 +8,18 @@
   revision = "5312a61534124124185d41f09206b9fef1d88403"
 
 [[projects]]
-  name = "github.com/ethereum/go-ethereum"
-  packages = ["crypto/sha3"]
-  revision = "66432f3821badf24d526f2d9205f36c0543219de"
-  version = "v1.8.7"
-
-[[projects]]
   branch = "master"
   name = "golang.org/x/crypto"
   packages = [
     "ed25519",
-    "ed25519/internal/edwards25519"
+    "ed25519/internal/edwards25519",
+    "sha3"
   ]
   revision = "4ec37c66abab2c7e02ae775328b2ff001c3f025a"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "b5fec122d8a5ff3e6d0f49bb297e96b132d8029519977040137bbde82c37df06"
+  inputs-digest = "0a748eb688ea66c45f62bb8878ba98eb49b29cf95e09753a5ff61ee73ad303fe"
   solver-name = "gps-cdcl"
   solver-version = 1

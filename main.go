@@ -8,8 +8,8 @@ import (
 	"math/big"
 
 	"github.com/agl/ed25519/edwards25519"
-	"github.com/ethereum/go-ethereum/crypto/sha3" // See https://github.com/golang/go/issues/19709
 	"golang.org/x/crypto/ed25519"
+	"golang.org/x/crypto/sha3"
 )
 
 type PrivateKey []byte
@@ -47,7 +47,7 @@ func newSpendKeyPair() (*KeyPair, error) {
 // makeViewKeyPair returns a view key pair based on a private spend key
 func makeViewKeyPair(p PrivateKey) *KeyPair {
 	// Hash private spend key using Keccak-256
-	h := sha3.NewKeccak256()
+	h := sha3.NewLegacyKeccak256()
 	h.Write(p)
 	// Important: Reduce to stay in finite field
 	priv := reduce(h.Sum(nil))
@@ -66,7 +66,7 @@ func makeAddress(pubSpend, pubView []byte) []byte {
 	buf = append(buf, netBytePrefix)
 	buf = append(buf, pubSpend...)
 	buf = append(buf, pubView...)
-	h := sha3.NewKeccak256()
+	h := sha3.NewLegacyKeccak256()
 	h.Write(buf)
 	hash := h.Sum(nil)
 	buf = append(buf, hash[:4]...)
