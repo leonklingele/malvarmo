@@ -149,7 +149,7 @@ func base58encode(data []byte) []byte {
 	return res
 }
 
-func newAddress() (*KeyPair, *KeyPair, []byte, error) {
+func NewAddress() (*KeyPair, *KeyPair, []byte, error) {
 	spendKeyPair, err := newSpendKeyPair()
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("failed to create new spend key pair: %s", err.Error())
@@ -160,7 +160,7 @@ func newAddress() (*KeyPair, *KeyPair, []byte, error) {
 }
 
 func run() error {
-	spendKeyPair, viewKeyPair, address, err := newAddress()
+	spendKeyPair, viewKeyPair, address, err := NewAddress()
 	if err != nil {
 		return fmt.Errorf("failed to create new address: %s", err.Error())
 	}

@@ -66,7 +66,7 @@ func TestMakeAddress(t *testing.T) {
 }
 
 func TestNewAddress(t *testing.T) {
-	spendKeyPair, viewKeyPair, _, err := newAddress()
+	spendKeyPair, viewKeyPair, _, err := NewAddress()
 	if err != nil {
 		t.Fatalf("failed to create new address: %s", err.Error())
 	}
