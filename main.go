@@ -57,7 +57,7 @@ func makeViewKeyPair(p PrivateKey) *KeyPair {
 }
 
 // makeAddress returns the address based on the public spend key and the public view key
-func makeAddress(pubSpend PublicKey, pubView PublicKey) []byte {
+func makeAddress(pubSpend, pubView PublicKey) []byte {
 	// A Monero address 'mAddr' looks as follows:
 	// c = netBytePrefix(0x12) | publicSpendKey | publicViewKey
 	// mAddr = base58encode(c | checksum(c)[:4])
