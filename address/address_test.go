@@ -1,4 +1,4 @@
-package main
+package address
 
 import (
 	"bytes"
@@ -66,7 +66,7 @@ func TestMakeAddress(t *testing.T) {
 }
 
 func TestNewAddress(t *testing.T) {
-	spendKeyPair, viewKeyPair, _, err := NewAddress()
+	spendKeyPair, viewKeyPair, _, err := New()
 	if err != nil {
 		t.Fatalf("failed to create new address: %s", err.Error())
 	}
