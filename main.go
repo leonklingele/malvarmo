@@ -1,15 +1,28 @@
 package main
 
 import (
+	"bytes"
 	"encoding/hex"
+	"flag"
 	"fmt"
 	"log"
+	"os"
+	"runtime"
 
 	"github.com/leonklingele/malvarmo/address"
 )
 
-func run() error {
-	spendKeyPair, viewKeyPair, address, err := address.New()
+func run(prefix []byte, numWorkers int) error {
+	var (
+		spendKeyPair, viewKeyPair *address.KeyPair
+		addr                      []byte
+		err                       error
+	)
+	if bytes.Equal([]byte{}, prefix) {
+		spendKeyPair, viewKeyPair, addr, err = address.New()
+	} else {
+		spendKeyPair, viewKeyPair, addr, err = address.NewWithPrefix(prefix, numWorkers)
+	}
 	if err != nil {
 		return fmt.Errorf("failed to create new address: %s", err.Error())
 	}
@@ -27,13 +40,23 @@ func run() error {
 	fmt.Println("Public Spend Key: ", hex.EncodeToString(spendKeyPair.PublicKey()))
 	fmt.Println("Private View Key: ", hex.EncodeToString(viewKeyPair.PrivateKey()))
 	fmt.Println("Public View Key:  ", hex.EncodeToString(viewKeyPair.PublicKey()))
-	fmt.Println("Address:          ", string(address))
+	fmt.Println("Address:          ", string(addr))
 
 	return nil
 }
 
 func main() {
-	if err := run(); err != nil {
+	prefix := flag.String("prefix", "", "optional, the address prefix to search for")
+	numWorkers := flag.Int("workers", runtime.GOMAXPROCS(-1), "optional, the number of workers to use for prefix search")
+	showHelp := flag.Bool("help", false, "show help and exit")
+	flag.Parse()
+
+	if *showHelp {
+		flag.Usage()
+		os.Exit(0)
+	}
+
+	if err := run([]byte(*prefix), *numWorkers); err != nil {
 		log.Fatal(err)
 	}
 }

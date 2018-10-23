@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
+	"runtime"
 	"testing"
 )
 
@@ -65,26 +66,51 @@ func TestMakeAddress(t *testing.T) {
 	}, t)
 }
 
-func TestNewAddress(t *testing.T) {
-	spendKeyPair, viewKeyPair, _, err := New()
+func TestNewAddressWithoutPrefix(t *testing.T) {
+	if err := testAddress(nil); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestNewAddressWithPrefix(t *testing.T) {
+	prefix := []byte("a")
+	if err := testAddress(prefix); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func testAddress(prefix []byte) error {
+	var spendKeyPair, viewKeyPair *KeyPair
+	var address []byte
+	var err error
+	if prefix == nil {
+		spendKeyPair, viewKeyPair, address, err = New()
+	} else {
+		spendKeyPair, viewKeyPair, address, err = NewWithPrefix(prefix, runtime.GOMAXPROCS(-1))
+	}
 	if err != nil {
-		t.Fatalf("failed to create new address: %s", err.Error())
+		return fmt.Errorf("failed to create new address: %s", err.Error())
+	}
+
+	if prefix != nil && !bytes.HasPrefix(address[2:], prefix) {
+		return fmt.Errorf("address '%s' does not have expected prefix '%s'", address, prefix)
 	}
 
 	if got := private2Public(spendKeyPair.PrivateKey()); !bytes.Equal(got, spendKeyPair.PublicKey()) {
-		t.Fatalf("got incorrect public spend key from secret spend key: %s", b2h(got))
+		return fmt.Errorf("got incorrect public spend key from secret spend key: %s", b2h(got))
 	}
 	if got := private2Public(viewKeyPair.PrivateKey()); !bytes.Equal(got, viewKeyPair.PublicKey()) {
-		t.Fatalf("got incorrect public view key from secret view key: %s", b2h(got))
+		return fmt.Errorf("got incorrect public view key from secret view key: %s", b2h(got))
 	}
 
 	vk := makeViewKeyPair(spendKeyPair.PrivateKey())
 	if got := vk.PrivateKey(); !bytes.Equal(got, viewKeyPair.PrivateKey()) {
-		t.Fatalf("got incorrect private view key: %s", b2h(got))
+		return fmt.Errorf("got incorrect private view key: %s", b2h(got))
 	}
 	if got := vk.PublicKey(); !bytes.Equal(got, viewKeyPair.PublicKey()) {
-		t.Fatalf("got incorrect public view key: %s", b2h(got))
+		return fmt.Errorf("got incorrect public view key: %s", b2h(got))
 	}
+	return nil
 }
 
 func foreachFixture(f func(fixture) error, t *testing.T) {

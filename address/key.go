@@ -2,7 +2,9 @@ package address
 
 import (
 	"crypto/rand"
+	"encoding/binary"
 	"fmt"
+	"math/big"
 
 	"github.com/agl/ed25519/edwards25519"
 	"golang.org/x/crypto/ed25519"
@@ -39,6 +41,52 @@ func newSpendKeyPair() (*KeyPair, error) {
 	// .. and generate an associated public key
 	pub := private2Public(priv)
 	return &KeyPair{priv, pub}, nil
+}
+
+// nextSpendKeyPairMaker returns a func to generate
+// a new key pair using an already existing one.
+// The previous key pair will be overwritten.
+func nextSpendKeyPairMaker(p *KeyPair) func() {
+	one := big.NewInt(1)
+	bn := big.NewInt(0)
+	return func() {
+		// TODO(leon): Reusing the old private key will give us a huge
+		// speed increase: p.pub = ed25519GeScalarMult(oldPriv, 2)
+
+		// Increase private key by one
+		bn.SetBytes(p.priv)
+		_ = bn.Add(bn, one)
+
+		var newPriv [32]byte
+		// bn.Bytes() might return a slice of length < 32 bytes
+		copy(newPriv[:], bn.Bytes())
+		newPriv[0] &= 248
+		newPriv[31] &= 127
+		newPriv[31] |= 64
+
+		p.priv = reduce(newPriv[:])
+		// TODO(leon): Reusing the old private key will give us a huge
+		// speed increase: p.pub = ed25519GeScalarMult(oldPriv, 2)
+		p.pub = private2Public(p.priv)
+	}
+}
+
+// nextSpendKeyPair generates a new key pair using
+// an already existing one. The previous key pair
+// will be overwritten.
+func nextSpendKeyPair(p *KeyPair) {
+	priv := p.priv
+	privUint64 := binary.BigEndian.Uint64(priv)
+	privUint64++
+
+	newPriv := priv
+	binary.BigEndian.PutUint64(newPriv[:32], privUint64)
+	newPriv[0] &= 248
+	newPriv[31] &= 127
+	newPriv[31] |= 64
+
+	p.priv = reduce(newPriv)
+	p.pub = private2Public(p.priv)
 }
 
 // makeViewKeyPair returns a view key pair based on a private spend key
