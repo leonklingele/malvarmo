@@ -50,9 +50,6 @@ func nextSpendKeyPairMaker(p *KeyPair) func() {
 	one := big.NewInt(1)
 	bn := big.NewInt(0)
 	return func() {
-		// TODO(leon): Reusing the old private key will give us a huge
-		// speed increase: p.pub = ed25519GeScalarMult(oldPriv, 2)
-
 		// Increase private key by one
 		bn.SetBytes(p.priv)
 		_ = bn.Add(bn, one)
