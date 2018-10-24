@@ -80,9 +80,11 @@ func TestNewAddressWithPrefix(t *testing.T) {
 }
 
 func testAddress(prefix []byte) error {
-	var spendKeyPair, viewKeyPair *KeyPair
-	var address []byte
-	var err error
+	var (
+		spendKeyPair, viewKeyPair *KeyPair
+		address                   []byte
+		err                       error
+	)
 	if prefix == nil {
 		spendKeyPair, viewKeyPair, address, err = New()
 	} else {
