@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"log"
+	"sync"
 
 	"golang.org/x/crypto/sha3"
 )
@@ -41,7 +42,7 @@ func NewWithPrefix(prefix []byte, numWorkers int) (*KeyPair, *KeyPair, []byte, e
 		address                   []byte
 	}
 
-	spawn := func(wid int, ch chan<- *result, done <-chan struct{}) error {
+	spawn := func(wid int, ch chan<- *result, mu sync.Mutex, done chan struct{}) error {
 		spendKeyPair, err := newSpendKeyPair()
 		if err != nil {
 			return fmt.Errorf("failed to create new spend key pair: %s", err.Error())
@@ -61,11 +62,13 @@ func NewWithPrefix(prefix []byte, numWorkers int) (*KeyPair, *KeyPair, []byte, e
 				}
 			}
 			// Try to send our result
-			// TODO(leon): There still is a data race here, i.e. send on closed channel.
+			mu.Lock()
+			defer mu.Unlock()
 			select {
 			case <-done:
 				// Closed
 			default:
+				close(done)
 				ch <- &result{
 					viewKeyPair:  viewKeyPair,
 					spendKeyPair: spendKeyPair,
@@ -78,15 +81,15 @@ func NewWithPrefix(prefix []byte, numWorkers int) (*KeyPair, *KeyPair, []byte, e
 
 	ch := make(chan *result)
 	var rch chan<- *result = ch
+	var mu sync.Mutex
 	done := make(chan struct{})
 	for i := 0; i < numWorkers; i++ {
-		if err := spawn(i, rch, done); err != nil {
+		if err := spawn(i, rch, mu, done); err != nil {
 			log.Printf("%s, retrying", err.Error())
 			i-- // Retry
 		}
 	}
 	res := <-ch
-	close(done)
 	close(ch)
 
 	return res.spendKeyPair, res.viewKeyPair, res.address, nil
