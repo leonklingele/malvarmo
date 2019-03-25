@@ -25,9 +25,9 @@ To specify an address prefix:
 
 ```sh
 $ malvarmo -prefix abc
-Private Spend Key: ecc492d7c487b0f7fd2db401c9e227187e5668d824156edcde515c720f604f08
-Public Spend Key:  d1f6d9d6d6614f031935c50a3615de798a276c2a98386453253ec997b14b3570
-Private View Key:  9117ef625cacb933d6f6453df5706155676fb4c8886ce89db9d0d21c5102400b
-Public View Key:   1e2e616e3ca5ca2084c5f85c5b26fd797a480206034ad7acf6dabcbbbaf2cf53
-Address:           49abc4DSxUn1X4RqB26NDTML63dPsGUsDEuchCee3PorKkgg56eakCh6SUMTYwqev8MKVAAcN2VDQVvyGXakCnR4APvavkM
+Private Spend Key: 14cf51a9dfe17dc4752642b3ed224075038cfadd7ac0e6fe4f73ced1b7944209
+Public Spend Key:  b7937472c7143cdf19f1b3614456b943446795c97413e1102ec7943c5338baf4
+Private View Key:  13fe2eafacba62eca72519e8b02c7127beb8aa34f4e672a629438d925270580e
+Public View Key:   ceaae0a32aea0ad93a1cdef1bed2479a0c0dfebd2db92713272112cbb67b45f9
+Address:           48abce5GhYXeKN2UeGfNxGCFaRC3Y4u1i3hzaiFkQpiDhwwNUb7g6ZXdLNhGWFXFpzSmT5sy3MtAr4ConUWzjFHnVBz3855
 ```
