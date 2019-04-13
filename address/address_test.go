@@ -15,6 +15,7 @@ type fixture struct {
 }
 
 var (
+	//nolint:gochecknoglobals
 	fixtures = []fixture{
 		{
 			"4a078e76cd41a3d3b534b83dc6f2ea2de500b653ca82273b7bfad8045d85a400",
