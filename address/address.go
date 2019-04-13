@@ -20,7 +20,9 @@ func makeAddress(pubSpend, pubView PublicKey) []byte {
 	buf = append(buf, pubSpend...)
 	buf = append(buf, pubView...)
 	h := sha3.NewLegacyKeccak256()
-	h.Write(buf)
+	if _, err := h.Write(buf); err != nil {
+		panic(err)
+	}
 	hash := h.Sum(nil)
 	buf = append(buf, hash[:4]...)
 	return base58encode(buf)

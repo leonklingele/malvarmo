@@ -90,7 +90,9 @@ func nextSpendKeyPair(p *KeyPair) {
 func makeViewKeyPair(p PrivateKey) *KeyPair {
 	// Hash private spend key using Keccak-256
 	h := sha3.NewLegacyKeccak256()
-	h.Write(p)
+	if _, err := h.Write(p); err != nil {
+		panic(err)
+	}
 	// Important: Reduce to stay in finite field
 	priv := reduce(h.Sum(nil))
 	// Turn private into public key

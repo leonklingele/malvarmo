@@ -124,7 +124,10 @@ func foreachFixture(f func(fixture) error, t *testing.T) {
 }
 
 func h2b(h string) []byte {
-	dec, _ := hex.DecodeString(h)
+	dec, err := hex.DecodeString(h)
+	if err != nil {
+		panic(err)
+	}
 	return dec
 }
 
