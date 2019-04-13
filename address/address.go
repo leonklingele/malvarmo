@@ -47,7 +47,7 @@ func NewWithPrefix(prefix []byte, numWorkers int) (*KeyPair, *KeyPair, []byte, e
 	spawn := func(wid int, ch chan<- *result, mu *sync.Mutex, done chan struct{}) error {
 		spendKeyPair, err := newSpendKeyPair()
 		if err != nil {
-			return fmt.Errorf("failed to create new spend key pair: %s", err.Error())
+			return fmt.Errorf("failed to create new spend key pair in worker %d: %q", wid, err)
 		}
 		go func() {
 			nextSpendKeyPair := nextSpendKeyPairMaker(spendKeyPair)
@@ -87,7 +87,7 @@ func NewWithPrefix(prefix []byte, numWorkers int) (*KeyPair, *KeyPair, []byte, e
 	done := make(chan struct{})
 	for i := 0; i < numWorkers; i++ {
 		if err := spawn(i, rch, &mu, done); err != nil {
-			log.Printf("%s, retrying", err.Error())
+			log.Printf("%q, retrying", err)
 			i-- // Retry
 		}
 	}
